@@ -6,7 +6,7 @@ sidebar_position: 1
 
 ### Sign Canister Method
 
-sign is used to sign a canister methods update or query by connected user.
+sign is used to sign canister methods like update or query by connected user.
 
 ```js
   const response = await window.earth.sign({
@@ -18,7 +18,7 @@ sign is used to sign a canister methods update or query by connected user.
  /*   
   {
     "ok": "afb264de8057a9ba7f79a51c80f99354004e686bb650172032aada5126e7f014"
-  } 
+  }
 */
 ```
 
@@ -32,7 +32,7 @@ With ICP, sign is best suited for canister update methods like transfer, list, s
 
 ### Error Handling
 
-Incase of any error from sign, an object with  `{type:"error", message:"some info"}` is resolved. For example,
+Incase of an error from sign, an object with  `{type:"error", message:"some info"}` is resolved. For example,
 
 ```js
   const response = await window.earth.sign({
@@ -50,12 +50,12 @@ Incase of any error from sign, an object with  `{type:"error", message:"some inf
               "Status": "rejected"
               "Code": "CanisterError"
               "Message": "IC0503: Canister bzsui-sqaaa-aaaah-qce2a-cai trapped explicitly: RTS error: blob_of_principal: invalid principal"
-  } 
+  }
 */
 ```
 
-### Sign Batch Canister Methods 
-sign can be used for batch queries or batch calls  canister methods by sending array of canister methods.
+### Sign Batch Canister Methods
+sign can be used for batch queries or batch calls canister methods by sending array of canister methods.
 
 ```js
  const response = await window.earth.sign([{
@@ -76,7 +76,7 @@ sign can be used for batch queries or batch calls  canister methods by sending a
     ]);
   console.log(response);
 
-  /* 
+  /*
   [{
   "ok": "1"
   },
@@ -113,7 +113,7 @@ For canister methods with `Principal` type of arguments, we can initialize as be
  import { Principal } from '@dfinity/principal';
 
   const args = {
-      "token": "xbxdl-yakor-uwiaa-aaaaa-cuaab-eaqca-aacwt-a", 
+      "token": "xbxdl-yakor-uwiaa-aaaaa-cuaab-eaqca-aacwt-a",
       "user": {
         "principal": Principal.fromText('o7nwu-n6kuf-4afzp-ybcuf-346pr-odd54-damf5-v4pvc-4sexh-cabph-7qe')
       }

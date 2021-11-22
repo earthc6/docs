@@ -16,7 +16,7 @@ if (window.earth !== undefined) {
     //Do something
 }
 else {
-    console.log('Dear User, Install Earth Wallet at https://www.earthwallet.io/');
+    console.log('Dear User, please install Earth Wallet at https://www.earthwallet.io/');
 }
 ```
 
@@ -32,7 +32,7 @@ Get the user address
  //account: xyzzzz
 ```
 
-Getting user address is very simple and by calling `earth.connect()` 
+Getting user address is very simple and by calling `earth.connect()`
 
 Once connected, calling `earth.connect()` will give same connected address e.g xyzzz. Currently, user can select `ICP Secp256k1` addresses only.
 
@@ -48,13 +48,13 @@ const isConnected = await window.earth.isConnected()
 ```js
 const addressMeta = await window.earth.getAddressMeta();
 /*
-    { 
+    {
         name: 'xyz',
-        createdAt: 1635962486, 
-        principalId: 'o7nwu-xxx', 
-        publicKey: 'asddd', 
+        createdAt: 1635962486,
+        principalId: 'o7nwu-xxx',
+        publicKey: 'asddd',
         type: 'ecdsa'
-        } 
+        }
 /*
 ```
 
