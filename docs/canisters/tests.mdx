@@ -1,0 +1,19 @@
+# Bug Bounty and tests
+
+## Bug Bounty
+
+We are offering a $10,000 reward for bugs. Please create a [Github issue](https://github.com/earthdao/earth/issues/new)
+
+## Tests
+
+Unit tests are currently located under the `test` directory of this repository. Each unit test file should be written in Motoko and are not deployed to any local or Internet Computer blockchain. It is rather compiled using Motoko's compiler, `moc`.
+
+When writing tests please follow these conventions:
+- Each unit test should be respective to each canister (e.g. `society` unit tests should be under `test/society`)
+- Mock any remote canisters
+- Tests are written in Motoko and use `assert` to validate conditions
+
+$1,000 is available for major test improvements and coverage, please use the [Github Pull Request Template](https://github.com/earthdao/earth/blob/master/pull_request_template.md) when submitting a new pull request.
+
+![Compatibility](https://img.shields.io/badge/compatibility-0.8.4-blue)
+[![.github/workflows/test.yml](https://github.com/earthdao/earth/actions/workflows/test.yml/badge.svg?branch=master)](https://github.com/earthdao/earth/actions/workflows/test.yml)
