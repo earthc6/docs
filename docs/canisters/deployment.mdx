@@ -1,0 +1,53 @@
+# Build and Deployment
+
+Deployments are handled by using the [Dfinity SDK ](https://smartcontracts.org/docs/developers-guide/install-upgrade-remove.html) and the `Makefile` located in root of this repository. The `Makefile` contains all the necessary recipes to build and deploy to the local block chain.
+
+## Local
+
+Local deployment is very straightforward and can be acheived by running the following commands:
+
+1. Start the local blockchain by running `dfx start`, please note that should be run in a separate terminal window or tab
+2. Deploy the `society` canister by running `make society`
+3. Deploy the `nft` canister by running `make nft`
+4. Generate dummy data running `make init`
+
+
+This project uses [Candid UI](https://github.com/dfinity/candid/tree/master/tools/ui) for easier management of the canister. Candid UI itself is a canister and we generate links to the local running instance, to get the URL to Candid UI please run `make society nft` and the URL will be printed out in the terminal window.
+
+## Production
+
+You will need to create a new identity on the Internet Computer, please refer to [Dfinity SDK docs](https://smartcontracts.org/docs/developers-guide/cli-reference/dfx-identity.html) on how to do so. You will also need to load the new identity wallet with ICP tokens.
+
+Deploying a society canister:
+
+1. Create a new society canister by adding a new entry to `dfx.json` (located in the root of this repository):
+
+```
+{
+  "canisters": {
+    "MY_SOCIETY_NAME": {
+      "main": "src/society/main.mo",
+      "type": "motoko"
+    },
+```
+
+The above will add a new society canister called `MY_SOCIETY_NAME`.
+
+2. Deploy it to the Internet Computer by calling `dfx deploy --network ic MY_SOCIETY_NAME`. Please replace `MY_SOCIETY_NAME` with the society name from the previous command.
+
+
+Deploying a NFT canister:
+
+1. Create a new NFT canister by adding a new entry to `dfx.json` (located in the root of this repository):
+```
+{
+  "canisters": {
+    "MY_NFT_COLLECTION_NAME": {
+      "main": "src/nft/main.mo",
+      "type": "motoko"
+    },
+```
+
+The above will add new NFt canister called `MY_NFT_COLLECTION_NAME`.
+
+2. Deploy it to the Internet Computer by calling `dfx deploy --network ic MY_NFT_COLLECTION_NAME --argument="(principal \"MY_PRINCIPAL_ID\")"`. Please replace `MY_SOCIETY_NAME` with the society name from the previous command and `MY_PRINCIPAL_ID` with your wallet principal id.
