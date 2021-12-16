@@ -1,0 +1,462 @@
+---
+sidebar_position: 1
+---
+
+# IDL
+
+This page contains the IDL for the NFT and Society canisters.
+
+### Society Canister
+```
+module {
+  public type AccountIdentifier = Text;
+  public type AccountIdentifier__1 = Text;
+  public type DAO = {
+    tag : TagName;
+    background : Text;
+    icon : Text;
+    name : Text;
+    description : Text;
+    collections : ?[UUID];
+  };
+  public type NFTPermission = { tokenIndex : TokenIndex; collections : UUID };
+  public type NftPost = { ID : TokenIndex; body : Text };
+  public type Post = { post : Post__1; author : User };
+  public type PostInfo = { ID : UUID; likes : [UUID]; comments : [UUID] };
+  public type Post__1 = { #nft : NftPost; #text : TextPost; #vote : VotePost };
+  public type Tag = { icon : Text; name : TagName };
+  public type TagName = Text;
+  public type TextPost = { body : Text };
+  public type TokenIndex = Nat32;
+  public type UUID = Text;
+  public type User = { coreUser : User__1; name : Text; avatar : Text };
+  public type User__1 = {
+    #principal : Principal;
+    #address : AccountIdentifier__1;
+  };
+  public type VoteOptionData = { votes : Nat8; text : Text };
+  public type VotePost = { question : Text; optionsData : [VoteOptionData] };
+  public type Self = actor {
+    addLedger : shared (AccountIdentifier, NFTPermission) -> async Nat;
+    addPost : shared (UUID, Post) -> async UUID;
+    createSociety : shared DAO -> async UUID;
+    createTag : shared Tag -> async ?TagName;
+    getAllPost : shared query () -> async [(UUID, Post)];
+    getAllSociety : shared query () -> async [(UUID, DAO)];
+    getAllTags : shared () -> async [(TagName, Tag)];
+    getAllTagsDao : shared () -> async ?[(TagName, [UUID])];
+    getLedgerByAccountID : shared query AccountIdentifier -> async ?(
+        AccountIdentifier,
+        [NFTPermission],
+      );
+    getLogs : shared query () -> async [Text];
+    getPostByID : shared query UUID -> async ?PostInfo;
+    getPostBySociety : shared query UUID -> async ?[Post];
+    getSociety : shared query UUID -> async ?DAO;
+    getSocietyByTag : shared query TagName -> async ?[DAO];
+    getTag : shared query TagName -> async ?Tag;
+    removeLedger : shared (AccountIdentifier, NFTPermission) -> async ();
+  }
+}
+```
+
+- `addLedger`: adds the NFT to the society (add permission)
+- `addPost`: share a post, returns the Post identifier UUID
+- `createSociety`: create a new society and returns the identifier
+- `createTag`: create a new tag
+- `getAllPost`: get all posts as a collection
+- `getAllSociety`: get all societies as a collection
+- `getAllTags`: get all tags
+- `getAllTagsDao`: get a colleciton of tuples of tags and array of Dao IDs
+- `getLedgerByAccountID`: get NFT and collections for the provided wallet address
+- `getLogs`: get debug logs
+- `getPostByID`: get post entry by the UUID
+- `getPostBySociety`: get all posts in the society
+- `getSociety`: get society entry by the UUID
+- `getSocietyByTag`: get societies that are in a tag
+- `getTag`: return the tag entry
+- `removeLedger`: remove the NFT from the society canister (remove permission)
+
+### NFT Canister
+
+```
+type User__1 =
+ variant {
+   address: AccountIdentifier;
+   "principal": principal;
+ };
+type User =
+ variant {
+   address: AccountIdentifier;
+   "principal": principal;
+ };
+type TransferResult =
+ variant {
+   Err: TransferError;
+   Ok: BlockIndex__1;
+ };
+type TransferResponse =
+ variant {
+   err:
+    variant {
+      CannotNotify: AccountIdentifier;
+      InsufficientBalance;
+      InvalidToken: TokenIdentifier;
+      Other: text;
+      Rejected;
+      Unauthorized: AccountIdentifier;
+    };
+   ok: Balance;
+ };
+type TransferRequest =
+ record {
+   amount: Balance;
+   from: User;
+   memo: Memo;
+   notify: bool;
+   subaccount: opt SubAccount;
+   to: User;
+   token: TokenIdentifier;
+ };
+type TransferError =
+ variant {
+   BadFee: record {expected_fee: ICP;};
+   InsufficientFunds: record {balance: ICP;};
+   TxCreatedInFuture;
+   TxDuplicate: record {duplicate_of: BlockIndex__1;};
+   TxTooOld: record {allowed_window_nanos: nat64;};
+ };
+type TransferArgs =
+ record {
+   amount: ICP;
+   created_at_time: opt Timestamp;
+   fee: ICP;
+   from_subaccount: opt SubAccount__1;
+   memo: Memo__1;
+   to: AccountIdentifier__1;
+ };
+type TransactionFinishResponse =
+ variant {
+   err: variant {
+          Err: text;
+          Ok: TokenIndex;
+        };
+   ok: TokenIndex;
+ };
+type Transaction =
+ record {
+   buyer: AccountIdentifier__2;
+   price: Price;
+   seller: principal;
+   time: Timestamp__1;
+   token: TokenIndex;
+ };
+type TokenIndex = nat32;
+type TokenIdentifier__1 = text;
+type TokenIdentifier = text;
+type Timestamp__1 = int;
+type Timestamp = record {timestamp_nanos: nat64;};
+type SubAccount__2 = vec nat8;
+type SubAccount__1 = blob;
+type SubAccount = vec nat8;
+type Stats =
+ record {
+   adminPrincipal: principal;
+   cyclesBalance: nat;
+   mintedNFT: nat;
+   nftAvgPrice: nat64;
+   nftSold: nat;
+   nftSoldAmount: nat64;
+ };
+type SettleResponse =
+ variant {
+   err: variant {
+          InvalidToken: TokenIdentifier__1;
+          Other: text;
+        };
+   ok: TransferResult;
+ };
+type Result_2 =
+ variant {
+   err: CommonError;
+   ok: AccountIdentifier__2;
+ };
+type Result_1 =
+ variant {
+   err: CommonError;
+   ok: Metadata;
+ };
+type Result =
+ variant {
+   err: CommonError;
+   ok: Balance__1;
+ };
+type Price = nat64;
+type NFTTransferRequest =
+ record {
+   amount: Balance__1;
+   from: User__1;
+   memo: Memo;
+   notify: bool;
+   subaccount: opt SubAccount__2;
+   to: User__1;
+   tokenIndex: TokenIndex;
+ };
+type MintRequest =
+ record {
+   collections: opt vec text;
+   metadata: opt blob;
+   to: User;
+ };
+type Metadata =
+ variant {
+   fungible:
+    record {
+      decimals: nat8;
+      metadata: opt blob;
+      name: text;
+      symbol: text;
+    };
+   nonfungible: record {
+                  collections: opt vec text;
+                  metadata: opt blob;
+                };
+ };
+type Memo__1 = nat64;
+type Memo = blob;
+type Listing =
+ record {
+   locked: opt Timestamp__1;
+   price: Price;
+   seller: principal;
+ };
+type ListResponse =
+ variant {
+   err: variant {
+          InvalidToken: TokenIdentifier__1;
+          Other: text;
+        };
+   ok: TokenIndex;
+ };
+type ListRequest =
+ record {
+   from_subaccount: opt SubAccount__2;
+   price: opt Price;
+   token: TokenIdentifier__1;
+ };
+type ICP = record {e8s: nat64;};
+type Extension = text;
+type CommonError__1 =
+ variant {
+   InvalidToken: TokenIdentifier;
+   Other: text;
+ };
+type CommonError =
+ variant {
+   InvalidToken: TokenIdentifier;
+   Other: text;
+ };
+type BlockIndex__1 = nat64;
+type BlockIndex = nat64;
+type Balance__1 = nat;
+type BalanceResponse =
+ variant {
+   err: CommonError__1;
+   ok: Balance;
+ };
+type BalanceRequest =
+ record {
+   token: TokenIdentifier;
+   user: User;
+ };
+type Balance = nat;
+type ApproveRequest =
+ record {
+   allowance: Balance;
+   spender: principal;
+   subaccount: opt SubAccount;
+   token: TokenIdentifier;
+ };
+type AllowanceRequest =
+ record {
+   owner: User;
+   spender: principal;
+   token: TokenIdentifier;
+ };
+type AccountIdentifier__2 = text;
+type AccountIdentifier__1 = blob;
+type AccountIdentifier = text;
+service : {
+  NFTTransfer: (NFTTransferRequest) -> (TransferResponse);
+  acceptCycles: () -> ();
+  allowance: (AllowanceRequest) -> (Result) query;
+  approve: (ApproveRequest) -> ();
+  availableCycles: () -> (nat) query;
+  availableICP: () -> (ICP);
+  balance: (BalanceRequest) -> (BalanceResponse) query;
+  bearer: (TokenIdentifier__1) -> (Result_2) query;
+  ext_settle: (TokenIndex, Price) -> (SettleResponse);
+  extensions: () -> (vec Extension) query;
+  getAllListings: () -> (vec TokenIndex) query;
+  getAllowances: () -> (vec record {
+                              TokenIndex;
+                              principal;
+                            }) query;
+  getCanisterAddress: () -> (text) query;
+  getListingByTokenID: (TokenIndex) ->
+   (vec record {
+          TokenIndex;
+          Listing;
+          Metadata;
+        }) query;
+  getLogs: () -> (vec text) query;
+  getMinter: () -> (principal) query;
+  getRegistry: () -> (vec record {
+                            TokenIndex;
+                            AccountIdentifier__2;
+                          }) query;
+  getStats: () -> (Stats);
+  getTokens: () -> (vec record {
+                          TokenIndex;
+                          Metadata;
+                        }) query;
+  getTransactions: () -> (vec Transaction) query;
+  getTxnsByTokenID: (TokenIndex) -> (vec Transaction) query;
+  list: (ListRequest) -> (ListResponse);
+  listings: () -> (vec record {
+                         TokenIndex;
+                         Listing;
+                         Metadata;
+                       }) query;
+  metadata: (TokenIdentifier__1) -> (Result_1) query;
+  mintNFT: (MintRequest) -> (opt TokenIndex);
+  sendICP: (TransferArgs) -> (TransferResult);
+  setMinter: (principal) -> ();
+  settle: (BlockIndex) -> (TransactionFinishResponse);
+  supply: (TokenIdentifier__1) -> (Result) query;
+  transfer: (TransferRequest) -> (TransferResponse);
+}
+```
+
+- `NFTTransfer`: transfers the NFT (must be called by the NFT canister)
+- `availableICP`: get the avaliable ICP in the canister wallet
+- `balance`: returns `1` if the caller owns the specific token, `0` otherwise
+- `getAllListings`: get all the listings
+- `getAllowances`: get a collection of allowances
+- `getCanisterAddress`: get the wallet address of this canister
+- `getListingByTokenID`: get a listing for the provided token id
+- `getLogs`: get a collection of debug logs
+- `getMinter`: get the minter principal id
+- `setMinter`: sets the minter principal
+- `getRegistry`: get a collection of tuples of the NFT and token holders
+- `getStats`: get NFT stats (# of NFT minted, # of NFT sold, average price)
+- `getTokens`: get a collection of the NFTs and metadata
+- `getTransactions`: get a collection of the transaction ledger for all NFTs in this canister
+- `getTxnsByTokenID`: get a collection of the transaction history for the given NFT
+- `list`: list a token for sale
+- `listings`: get a collection of NFT for sale
+- `metadata`: returns NFT metadata of the token at the given token index
+- `mintNFT`: mint new NFTs
+- `settle`: validates the transaction with the given block height, transfers the NFT (purchase callback), and notifies the society canisters with the new NFT holder
+
+### Proxy Block
+```
+type Block = record {
+  parent_hash: Hash;
+  timestamp: TimeStamp;
+  transaction: Transaction;
+};
+
+type Hash = opt record {
+  inner: blob;
+};
+
+type AccountIdentifier = text;
+
+type ICPTs = record {
+  e8s : nat64;
+};
+
+type Memo = nat64;
+
+type TimeStamp = record {
+  timestamp_nanos: nat64;
+};
+
+type Transaction = record {
+  transfer: Transfer;
+  memo: Memo;
+  created_at_time: TimeStamp;
+};
+
+type Transfer = variant {
+  Burn: record {
+    from: AccountIdentifier;
+    amount: ICPTs;
+  };
+  Mint: record {
+    to: AccountIdentifier;
+    amount: ICPTs;
+  };
+  Send: record {
+    from: AccountIdentifier;
+    to: AccountIdentifier;
+    amount: ICPTs;
+  };
+};
+
+type CanisterId = principal;
+
+type TipOfChain = record {
+  certification: opt Certification;
+  tip_index: BlockHeight;
+};
+
+type Certification = blob;
+
+type BlockHeight = nat64;
+
+service : {
+  block : (nat64) -> (variant { Ok: variant { Ok: Block; Err: CanisterId }; Err: text });
+  tip_of_chain : () -> (variant { Ok: TipOfChain; Err: text });
+}
+```
+
+- `block`: given a block height, validates the transaction and returns the block info data (including memo and transaction data)
+- `tip_of_chain`: returns the latest block height of the block chain
+
+## Examples
+
+### Society
+
+Creating a new Tag:
+```
+dfx canister call society createTag '(record {icon="/frontend/assets/Tags/all.png"; name="All"})'
+```
+
+The above creates a new tag called "All" with the icon URL.
+
+Creating a new Society:
+
+```
+dfx canister call society createSociety 'record {name="Graffiti"; tag="Art"; background="/frontend/assets/Society/background/img_2.png"; icon="/frontend/assets/Society/icon/img_1.png"; description="Graffiti and street art"}'
+```
+
+The above creates a new society called "Graffiti" and associates it to the tag "Art". The method returns a UUID which is necessary for sharing posts, videos and images.
+
+Sharing a Text Post:
+
+```
+dfx canister call society addPost '("Graffiti", record {ID="3"; post=variant {text=record {body="Now this is art"}}; author=record {coreUser=variant {address="bbefd96fef9f11b044cae5c4b797fd4f910eddbe8416b17ecee286f25531d6ff"}; name="EarthC6"; avatar="https://static.wikia.nocookie.net/dragonball/images/0/0d/DendeIllFightToo.png/revision/latest/scale-to-width-down/350?cb=20110906232642"}})'
+```
+
+The above shares a post to the "Graffiti" society.
+
+### NFT
+
+Minting a NFT:
+```
+dfx canister call nft mintNFT 'record {to=variant {address="bbefd96fef9f11b044cae5c4b797fd4f910eddbe8416b17ecee286f25531d6ff"}; metadata=null; collections=opt vec{"Admin Graffiti"}}'
+```
+
+The above creates a new NFT for the wallet address `bbefd96fef9f11b044cae5c4b797fd4f910eddbe8416b17ecee286f25531d6ff` and adds it to `Admin Graffiti` collection.
