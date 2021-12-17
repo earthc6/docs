@@ -1,0 +1,54 @@
+---
+sidebar_position: 3
+---
+
+# Society
+
+This page contains the IDL for a society canister. Each society canister is a decentralized autonomous organization (DAO) where you can share posts, proposals, vote and much more.
+
+### Society Canister
+
+- `addLedger`: adds the NFT to the society (add permission)
+- `addPost`: share a post, returns the Post identifier UUID
+- `createSociety`: create a new society and returns the identifier
+- `createTag`: create a new tag
+- `getAllPost`: get all posts as a collection
+- `getAllSociety`: get all societies as a collection
+- `getAllTags`: get all tags
+- `getAllTagsDao`: get a collection of tuples of tags and array of Dao IDs
+- `getLedgerByAccountID`: get NFT and collections for the provided wallet address
+- `getLogs`: get debug logs
+- `getPostByID`: get post entry by the UUID
+- `getPostBySociety`: get all posts in the society
+- `getSociety`: get society entry by the UUID
+- `getSocietyByTag`: get societies that are in a tag
+- `getTag`: return the tag entry
+- `removeLedger`: remove the NFT from the society canister (remove permission)
+
+
+## Examples
+
+The below examples will require you to install and use the [Dfinity SDK](https://sdk.dfinity.org/docs/developers-guide/install-upgrade-remove.html). Please ensure that you have it installed as you will need `dfx` to run the commands below.
+
+### Creating a new Tag
+```
+dfx canister call society createTag '(record {icon="/frontend/assets/Tags/all.png"; name="All"})'
+```
+
+The above creates a new tag called "All" with the icon URL.
+
+### Creating a new Society
+
+```
+dfx canister call society createSociety 'record {name="Graffiti"; tag="Art"; background="/frontend/assets/Society/background/img_2.png"; icon="/frontend/assets/Society/icon/img_1.png"; description="Graffiti and street art"}'
+```
+
+The above creates a new society called "Graffiti" and associates it to the tag "Art". The method returns a UUID which is necessary for sharing posts, videos and images.
+
+### Sharing a Text Post
+
+```
+dfx canister call society addPost '("Graffiti", record {ID="3"; post=variant {text=record {body="Now this is art"}}; author=record {coreUser=variant {address="bbefd96fef9f11b044cae5c4b797fd4f910eddbe8416b17ecee286f25531d6ff"}; name="EarthC6"; avatar="https://static.wikia.nocookie.net/dragonball/images/0/0d/DendeIllFightToo.png/revision/latest/scale-to-width-down/350?cb=20110906232642"}})'
+```
+
+The above shares a post to the "Graffiti" society.

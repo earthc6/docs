@@ -1,14 +1,14 @@
 ---
-sidebar_position: 3
+sidebar_position: 1
 ---
 
 # Architecture
 
 ## Society
-Each society canister is a decentralized autonomous organization (DAO) where you can share posts, proposals, vote and much more.
+Each society canister is a decentralized autonomous organization (DAO) where you can share posts, proposals, vote and much more. Our intention is that you can use your NFT to create and vote on proposals.
 
-### Permisions
-The canister can have multiple NFT child canisters (via collections). Permission is granted when a NFT is minted or transfered and determined at runtime by the intersection of the NFT holder's wallet address and collection. The society canisters are notified when the NFT is transfered/minted and are then stored within an internal NFT ledger (which contains the token id and wallet address of the holder). Access level is granted based on the collection name (e.g. minting new NFT associated to the "Admin" collection will give the NFT holder admin permissions).
+### Permissions
+The canister can have multiple NFT child canisters (via collections). Permission is granted when a NFT is minted or transferred and determined at runtime by the intersection of the NFT holder's wallet address and collection. The society canisters are notified when the NFT is transferred/minted and are then stored within an internal NFT ledger (which contains the token id and wallet address of the holder). Access level is granted based on the collection name (e.g. minting new NFT associated to the "Admin" collection will give the NFT holder admin permissions).
 
 ### Posts, Proposal, and Votes
 
@@ -23,12 +23,12 @@ NFTs is based on the EXT standard and implements a [ERC721](https://eips.ethereu
 When the NFT canister is created or deployed, you need to provide a "minter principal" which is the wallet address or Principal ID of the DFX identity that will be minting NFTs. If the cal
 
 ### Listings
-Users are able to sell their NFTs by listing it for sale. This can acheieved by the NFT holder by calling the `list` method on their NFT canister. When a NFT is listed for sale, it is recorded within an internal listing ledger with the price of the NFT and when it was listed for sale.
+Users are able to sell their NFTs by listing it for sale. This can achieved by the NFT holder by calling the `list` method on their NFT canister. When a NFT is listed for sale, it is recorded within an internal listing ledger with the price of the NFT and when it was listed for sale.
 
 A listing can also be updated (e.g. updating the listing price) by calling the `list` function again. A listing can be removed by calling `list` with a 0 amount.
 
 ### Purchases
-Users are able to purchase an NFT by sending the NFT value to the NFT canister. When the ICP funds are transfered to the NFT canister, the buyer needs to set the `memo` field to the NFT token index and this field is used to track which NFT is being purchased.
+Users are able to purchase an NFT by sending the NFT value to the NFT canister. When the ICP funds are transferred to the NFT canister, the buyer needs to set the `memo` field to the NFT token index and this field is used to track which NFT is being purchased.
 
 Due to security, the public ledger does not do callbacks nor notifications, to get around this we require the buyer to call the `settle` function. The `settle` function validates if the tansaction is valid and that the funds are within the NFT canister wallet. After this validation, the seller of the NFT is paid (minus canister fees) from the NFT canister wallet. If the transaction validation or seller payment fails, the buyer is refunded (gas fees are not refunded) and the sale is cancelled. Otherwise, the transaction is recorded and the NFT is transferred.
 
